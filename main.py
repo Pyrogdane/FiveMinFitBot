@@ -1,19 +1,14 @@
 import logging
 import sys
-from os import getenv
 from config import TOKEN, ADMIN_CHAT_ID, PGPASS, DB_USER, DB_NAME, DB_HOST, DB_PORT
-# from dotenv import load_dotenv
-from keyboard.builder import reply, inline_btn, inline_kb
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from aiogram.filters import Command
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from datetime import datetime, timedelta, date
-from asyncpg import Connection
 import asyncio
 import asyncpg
-import sqlite3
 from typing import Optional, Tuple
 import re
 
