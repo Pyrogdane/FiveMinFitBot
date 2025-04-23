@@ -384,27 +384,6 @@ async def get_reminder_time(message: Message, state: FSMContext):
     await message.answer(response, reply_markup=types.ReplyKeyboardRemove())
 
 
-# Эта функция возвращает случайное упражнение для заданного уровня подготовки.
-# async def get_exercise_for_user(level: int, types: list[str]) -> Optional[Tuple[str, str, str]]:
-#     if not types:
-#         return None
-#
-#     placeholders = ','.join(f'${i + 2}' for i in range(len(types)))  # $2, $3, ...
-#     query = f"""
-#         SELECT e.name, e.description, e.repetitions
-#         FROM exercises e
-#         JOIN exercise_type_links l ON e.id = l.exercise_id
-#         JOIN exercise_types t ON l.type_id = t.id
-#         WHERE e.level <= $1 AND t.name IN ({placeholders})
-#         ORDER BY RANDOM()
-#         LIMIT 1
-#     """
-#
-#     async with db_pool.acquire() as conn:
-#         row = await conn.fetchrow(query, level, *types)
-#         if row:
-#             return row["name"], row["description"], row["repetitions"]
-#         return None
 async def get_exercise_for_user(level: int, types: list[str]) -> Optional[Tuple[str, str, str]]:
     if not types:
         print("⚠️ Нет типов упражнений для пользователя")
@@ -701,7 +680,7 @@ async def handle_feedback_comment(message: Message, state: FSMContext):
         if comment.lower() == "нет":
             comment = None
 
-        today = datetime.date
+        today = date.today()
 
         await conn.execute(
             "INSERT INTO feedback (user_id, date, rating, comment) VALUES ($1, $2, $3, $4)",
@@ -721,7 +700,6 @@ async def handle_ask(message: Message):
         return
 
     chat_id = message.chat.id
-    today = datetime.date
 
     async with db_pool.acquire() as conn:
         user_row = await conn.fetchrow("SELECT id FROM users WHERE chat_id = $1", chat_id)
@@ -740,7 +718,7 @@ async def handle_ask(message: Message):
             """,
             user_id, chat_id, question, "open"
         )
-        question_id = user_id
+        question_id = row["id"]
 
     # Уведомление администратору
     msg = (
@@ -753,6 +731,7 @@ async def handle_ask(message: Message):
 
     await message.bot.send_message(ADMIN_CHAT_ID, msg, reply_markup=keyboard, parse_mode="Markdown")
     await message.answer("Вопрос отправлен администратору. Он свяжется с тобой при необходимости.")
+
 
 
 async def calculate_streak(user_id: int) -> int:
@@ -799,10 +778,9 @@ async def show_help(message: Message):
 async def admin_start_answer(callback: CallbackQuery, state: FSMContext):
     question_id = int(callback.data.replace("answer_", ""))
     async with db_pool.acquire() as conn:
-        question = await conn.fetch(
+        question = await conn.fetchrow(
             """
-            SELECT text FROM questions
-            WHERE user_id = $1
+            SELECT text FROM questions WHERE id = $1
             """,
             question_id
         )
@@ -815,6 +793,7 @@ async def admin_start_answer(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer("Введите ваш ответ для пользователя:")
     await state.set_state(Help.answering)
     await callback.answer()
+
 
 
 @dp.message(Help.answering)
