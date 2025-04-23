@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.db
+.env
+*.log
+
+# Virtual env
+venv/
+env/
+
+# VS Code / PyCharm
+.vscode/
+.idea/
+
+# System
+.DS_Store
