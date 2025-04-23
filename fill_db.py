@@ -85,5 +85,31 @@ async def seed_data():
     await conn.close()
     print("✅ База успешно заполнена данными!")
 
+async def print_all_data():
+    conn = await asyncpg.connect(
+        user='phbot_user',
+        password='your_password',
+        database='phbot',
+        host='localhost'
+    )
 
+    print("\n📄 EXERCISES:")
+    rows = await conn.fetch("SELECT id, name, level, description, repetitions FROM exercises ORDER BY id")
+    for row in rows:
+        print(dict(row))
+
+    print("\n📄 EXERCISE TYPES:")
+    types = await conn.fetch("SELECT id, name FROM exercise_types ORDER BY id")
+    for row in types:
+        print(dict(row))
+
+    print("\n📄 EXERCISE TYPE LINKS:")
+    links = await conn.fetch("SELECT exercise_id, type_id FROM exercise_type_links ORDER BY exercise_id")
+    for row in links:
+        print(dict(row))
+
+    await conn.close()
+
+
+asyncio.run(print_all_data())
 asyncio.run(seed_data())
