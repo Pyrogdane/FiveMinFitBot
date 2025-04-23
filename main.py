@@ -309,7 +309,7 @@ async def choose_types(message: Message, state: FSMContext):
         #await message.answer("Сколько минут ты готов уделять тренировке?", reply_markup=types.ReplyKeyboardRemove())
         #await state.set_state(UserState.training_time)
         await message.answer(
-            "Во сколько по времени тебе отправлять напоминания о тренировке? (Введи в формате ЧЧ:ММ, например, 08:00)",
+            "Во сколько по времени тебе отправлять напоминания о тренировке? (Введи в формате ЧЧ:ММ, например, 08:00). ВАЖНО! На данный момент бот живет по часовому поясу МСК, учитывайте это при установке времени!",
             reply_markup=types.ReplyKeyboardRemove())
         await state.set_state(UserState.reminder_time)
     else:
