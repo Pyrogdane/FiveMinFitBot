@@ -87,10 +87,11 @@ async def seed_data():
 
 async def print_all_data():
     conn = await asyncpg.connect(
-        user='phbot_user',
-        password='your_password',
-        database='phbot',
-        host='localhost'
+        user=DB_USER,
+        password=PGPASS,
+        database=DB_NAME,
+        host=DB_HOST,
+        port=DB_PORT
     )
 
     print("\n📄 EXERCISES:")
