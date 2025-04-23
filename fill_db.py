@@ -2,20 +2,6 @@ import asyncpg
 import asyncio
 from config import TOKEN, ADMIN_CHAT_ID, PGPASS, DB_USER, DB_NAME, DB_HOST, DB_PORT
 
-async def create_database():
-    conn = await asyncpg.connect(
-        user=DB_USER,
-        password=PGPASS,
-        database="postgres",  # временно подключаемся к системной БД
-        host=DB_HOST,
-        port=DB_PORT
-    )
-    await conn.execute("CREATE DATABASE phbot")
-    await conn.close()
-    print("База данных создана.")
-
-asyncio.run(create_database())
-
 async def seed_data():
     conn = await asyncpg.connect(
         user=DB_USER,
